@@ -37,6 +37,26 @@ function jumlahPompa($conn,$namapumppit){
   <td>P3</td>
 </tr>
 */
+
+// AMBIL DATA LEVEL PASUT
+$oraquery="SELECT BAHAYA_TERTINGGI,WASPADA_TERTINGGI,AMAN_TERTINGGI,AMAN_TERENDAH FROM LEVELMLWS WHERE ID=1";
+
+$ambildata=oci_parse($conn,$oraquery);
+oci_execute($ambildata);
+$oraRow = oci_fetch_array($ambildata);
+
+$rowbahaya=$oraRow['BAHAYA_TERTINGGI'];
+$viewBahaya=number_format($rowbahaya ,1,".","");
+
+$rowwaspada=$oraRow['WASPADA_TERTINGGI'];
+$viewWaspada=number_format($rowwaspada ,1,".","");
+
+$rowaman=$oraRow['AMAN_TERTINGGI'];
+$viewAman=number_format($rowaman ,1,".","");
+
+$rowamanlow=$oraRow['AMAN_TERENDAH'];
+$viewAmanLow=number_format($rowamanlow ,1,".","");
+oci_free_statement($ambildata);
 ?>
 <!doctype html>
 <html lang="en">
@@ -1181,7 +1201,7 @@ function pasutairlaut() {
 pasutairlaut()
 */
 
-function pasutmlws(uri){
+function pasutmlws(uri,tbahaya,twaspada,taman){
   const fetchData = async () => {
     try {
       const dat = await dataApi(uri)
@@ -1193,9 +1213,9 @@ function pasutmlws(uri){
           
       if(request!="0"){
         mlws="+"+uSonic.toFixed(3)+" MLWS"
-        if(uSonic<=0.7){stat="AMAN";warnaAir="rgba(50,210,50,0.7)";svgico="dist/svg/checkmark.svg"}// #32CD32
-        else if(uSonic>0.7 && uSonic<0.9){stat="WASPADA";warnaAir="rgba(255,193,7,0.7)";svgico="dist/svg/exclamation.svg"}//#ffc107
-        else if(uSonic>=1){stat="BAHAYA";warnaAir="rgba(220,35,36,0.7)";svgico="dist/svg/exclamation.svg"}//#dc3545
+        if(uSonic<=taman){stat="AMAN";warnaAir="rgba(50,210,50,0.7)";svgico="dist/svg/checkmark.svg"}// #32CD32
+        else if(uSonic>taman && uSonic<twaspada){stat="WASPADA";warnaAir="rgba(255,193,7,0.7)";svgico="dist/svg/exclamation.svg"}//#ffc107
+        else if(uSonic>=tbahaya){stat="BAHAYA";warnaAir="rgba(220,35,36,0.7)";svgico="dist/svg/exclamation.svg"}//#dc3545
         else{warnaAir="#777";svgico="dist/svg/no-file.svg" }
       }
       else{
@@ -1413,7 +1433,11 @@ pumpParameter(apiCy2,intervalAPI,'cy2_conn','cy2_pln','cy2_usonic','cy2_gage_1',
 pumpParameter(apiCy4,intervalAPI,'cy4_conn','cy4_pln','cy4_usonic','cy4_gage_1','cy4_gage_2','cy4_gage_3','cy4_gage_4')
 pumpParameter(apiCluster2_1,intervalAPI,'cluster2_conn','cluster2_pln','cluster2_usonic','cluster2_gage_1','cluster2_gage_2','cluster2_gage_3','cluster2_gage_4')
 
-pasutmlws(apiPrasasti2)
+
+tideBahaya='<?php json_encode($viewBahaya); ?>'
+tideWaspada='<?php json_encode($viewWaspada); ?>'
+tideAman='<?php json_encode($viewAman); ?>'
+pasutmlws(apiPrasasti2,tideBahaya,tideWaspada,tideAman)
 
 // _______________ Initialize TOOLTIP _______________ 
 const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
