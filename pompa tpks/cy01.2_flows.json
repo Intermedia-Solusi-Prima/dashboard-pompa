@@ -1,0 +1,2420 @@
+[
+    {
+        "id": "f7b69ad05fbc9239",
+        "type": "tab",
+        "label": "cy01.2",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "df9adddfe1c345b9",
+        "type": "function",
+        "z": "f7b69ad05fbc9239",
+        "name": "restAPI",
+        "func": "// Function node JSON API\nlet atRequest = flow.get('atRequest')\nlet motorName = flow.get('motorName')\nlet decode = flow.get('decode')\nlet controllerMode = flow.get('controllerMode')\nlet waterLevel = flow.get('waterLevel')\nlet pump1 = flow.get('pump1')\nlet pump2 = flow.get('pump2')\nlet pump3 = flow.get('pump3')\nlet runM1 = flow.get('runM1')\nlet runM2 = flow.get('runM2')\nlet runM3 = flow.get('runM3')\nlet maintenHour = flow.get('maintenanceHour')\nlet energyKW = flow.get('energyKW')\nlet energyKVA = flow.get('energyKVA')\nlet apparPower = flow.get('apparPower')\nlet voltageL1N = flow.get('voltageL1N')\nlet voltageL2N = flow.get('voltageL2N')\nlet voltageL3N = flow.get('voltageL3N')\nlet currentL1 = flow.get('currentL1')\nlet currentL2 = flow.get('currentL2')\nlet currentL3 = flow.get('currentL3')\nlet maintainRun = flow.get('maintainRunDay')\nlet maintainAge = flow.get('maintainAge')\nlet nomPower = flow.get('nominalPower')\nlet nomCurrent = flow.get('nominalCurrent')\nlet realPower = flow.get('realPower')\n\nlet overCurrent = flow.get('limitOverCurrent')\nlet overVolt = flow.get('limitOverVolt')\nlet underVolt = flow.get('limitUnderVolt')\n\nmsg.payload = {\n    area:\"Terminal Petikemas Semarang\",\n    lokasi:\"cy01.2\",\n    data:{\n        request: atRequest,\n        device: motorName,\n        passdecode: decode,\n        mode: controllerMode,\n        ultrasonic: waterLevel,\n        statusPump1: pump1,\n        statusPump2: pump2,\n        statusPump3: pump3,\n        runhourM1: runM1,\n        runhourM2: runM2,\n        runhourM3: runM3,\n        energyKW: energyKW,\n        energyKVA: energyKVA,\n        apparentPower: apparPower,\n        voltageL1_N: voltageL1N,\n        voltageL2_N: voltageL2N,\n        voltageL3_N: voltageL3N,\n        currentL1: currentL1,\n        currentL2: currentL2,\n        currentL3: currentL3,\n        warningMaintenanceHour: maintenHour,\n        warningMaintainRunDay: maintainRun,\n        warningMaintainAge: maintainAge,\n        nominalPower: nomPower,\n        nominalCurrent: nomCurrent,\n        realPower:realPower,\n\n        overCurrentLimit: overCurrent,\n        overVoltageLimit: overVolt,\n        underVoltageLimit: underVolt,\n    }\n};\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 520,
+        "y": 40,
+        "wires": [
+            [
+                "a4a6c09204e5af4e"
+            ]
+        ]
+    },
+    {
+        "id": "ff3d803f22c98535",
+        "type": "function",
+        "z": "f7b69ad05fbc9239",
+        "name": "Dec to Bin reverse",
+        "func": "// fungsi binary reverse\nfunction reverseBin(str) {\n  return str.split('').reverse().join('');\n}\n\n// mengeluarkan dr array\nlet decNum=msg.payload[0]\n\n// konversi dec to bin\nlet binNum=decNum.toString(2)\n\n//reverse bin's digit\nmsg.payload=reverseBin(binNum)\n\nreturn msg",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 550,
+        "y": 380,
+        "wires": [
+            [
+                "1ff842dbe4380d9c",
+                "768fec5bc7aee4ee",
+                "6ba55f5a7623e2cc"
+            ]
+        ]
+    },
+    {
+        "id": "1ff842dbe4380d9c",
+        "type": "function",
+        "z": "f7b69ad05fbc9239",
+        "name": "cek pum 1",
+        "func": "//binary data cek berdasarkan no array pompa\nfunction cekBinary(str,no) {\n    let cek = ''\n    for (let i=0; i<str.length; i++) {\n        if(str[no]==1){\n          cek=\"ON\"\n        }\n        else {cek=\"OFF\"}\n    }\n    return cek\n}\n//nilai binary saat pumpit bekerja array nomor 1,2 dan 3 (0-6)\nlet noPum=1\nlet binData=msg.payload\n\nmsg.payload = cekBinary(binData,noPum)\nreturn msg",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 750,
+        "y": 340,
+        "wires": [
+            [
+                "0538f66b655db810"
+            ]
+        ]
+    },
+    {
+        "id": "120f910755f540bf",
+        "type": "debug",
+        "z": "f7b69ad05fbc9239",
+        "name": "debug 5",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 860,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "f4754b0266d8ba40",
+        "type": "inject",
+        "z": "f7b69ad05fbc9239",
+        "name": "interval input",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "10",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "interval",
+        "payload": "",
+        "payloadType": "date",
+        "x": 120,
+        "y": 500,
+        "wires": [
+            [
+                "1f8161c2d45a8d8a",
+                "2891b544d0b11e06",
+                "c31ad6e1944f9588",
+                "84d30edc4e901d5d",
+                "41a5f4324c3e1c1c",
+                "cf41f437c98122c3",
+                "266d711fddbab6c3",
+                "bb2d470312c0e0ea",
+                "98b5d94243f48969",
+                "abe0de3be9221a17",
+                "d6b06aa96b2ff28b",
+                "452d92cc54813122",
+                "09a42ed8fa3c5524",
+                "50b503e819ee3fb8",
+                "92a75716921ea047",
+                "a3d6985b5ec8794b",
+                "c6a2aa28701320d3",
+                "5d1ef768ef4496dd",
+                "a21a1f7289f9dcb5",
+                "a9bd46463f5c2d4d",
+                "93326a75b7e79994",
+                "356113f8332a7857",
+                "fe785feb23b851da",
+                "8138aa01d72bab79",
+                "ad6451f4f7193bfa",
+                "04b6e3f3132b6596",
+                "b1ba7e1f0f2f8748"
+            ]
+        ]
+    },
+    {
+        "id": "768fec5bc7aee4ee",
+        "type": "function",
+        "z": "f7b69ad05fbc9239",
+        "name": "cek pum 2",
+        "func": "//binary data cek berdasarkan no array pompa\nfunction cekBinary(str,no) {\n    let cek = ''\n    for (let i=0; i<str.length; i++) {\n        if(str[no]==1){\n          cek=\"ON\"\n        }\n        else {cek=\"OFF\"}\n    }\n    return cek\n}\n//nilai binary saat pumpit bekerja array nomor 1,2 dan 3 (0-6)\nlet noPum=2\nlet binData=msg.payload\n\nmsg.payload = cekBinary(binData,noPum)\nreturn msg",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 750,
+        "y": 380,
+        "wires": [
+            [
+                "20dd7dd80809581b"
+            ]
+        ]
+    },
+    {
+        "id": "6ba55f5a7623e2cc",
+        "type": "function",
+        "z": "f7b69ad05fbc9239",
+        "name": "cek pum 3",
+        "func": "//binary data cek berdasarkan no array pompa\nfunction cekBinary(str,no) {\n    let cek = ''\n    for (let i=0; i<str.length; i++) {\n        if(str[no]==1){\n          cek=\"ON\"\n        }\n        else {cek=\"OFF\"}\n    }\n    return cek\n}\n//nilai binary saat pumpit bekerja array nomor 1,2 dan 3 (0-6)\nlet noPum=3\nlet binData=msg.payload\n\nmsg.payload = cekBinary(binData,noPum)\nreturn msg",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 750,
+        "y": 420,
+        "wires": [
+            [
+                "4bfd30c9a9a3aaa1"
+            ]
+        ]
+    },
+    {
+        "id": "1f8161c2d45a8d8a",
+        "type": "modbus-getter",
+        "z": "f7b69ad05fbc9239",
+        "name": "cy01.2_bin-In",
+        "showStatusActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "logIOActivities": false,
+        "unitid": "29",
+        "dataType": "HoldingRegister",
+        "adr": "61",
+        "quantity": "1",
+        "server": "8a654628f11de8d7",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "keepMsgProperties": false,
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "x": 340,
+        "y": 380,
+        "wires": [
+            [
+                "ff3d803f22c98535"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "2891b544d0b11e06",
+        "type": "modbus-getter",
+        "z": "f7b69ad05fbc9239",
+        "name": "cy01.2_usonic",
+        "showStatusActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "logIOActivities": false,
+        "unitid": "29",
+        "dataType": "HoldingRegister",
+        "adr": "150",
+        "quantity": "1",
+        "server": "8a654628f11de8d7",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "keepMsgProperties": false,
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "x": 340,
+        "y": 300,
+        "wires": [
+            [
+                "6861d31de64b3809"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "6861d31de64b3809",
+        "type": "function",
+        "z": "f7b69ad05fbc9239",
+        "name": "usonic_wLevel",
+        "func": "msg.payload=msg.payload[0]/10\nreturn msg",
+        "outputs": 1,
+        "timeout": "5",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 540,
+        "y": 300,
+        "wires": [
+            [
+                "29d8b648285365e5"
+            ]
+        ]
+    },
+    {
+        "id": "c31ad6e1944f9588",
+        "type": "modbus-getter",
+        "z": "f7b69ad05fbc9239",
+        "name": "cy01.2_setMotrName",
+        "showStatusActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "logIOActivities": false,
+        "unitid": "29",
+        "dataType": "HoldingRegister",
+        "adr": "3019",
+        "quantity": "8",
+        "server": "8a654628f11de8d7",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "keepMsgProperties": false,
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "x": 360,
+        "y": 180,
+        "wires": [
+            [
+                "4024c6ed3b1f8182"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "4024c6ed3b1f8182",
+        "type": "function",
+        "z": "f7b69ad05fbc9239",
+        "name": "dec to ascii",
+        "func": "// fungsi desimal ke heksadesimal\nfunction decimalArrayToHexArray(decimalArray) {\n    return decimalArray.map(decimal => decimal.toString(16))\n}\n\n// fungsi heksadesimal ke ascii\nfunction hexToAscii(hexArray) {\n    return hexArray.map(hex => {\n        let asciiString = ''\n        for (let i = 0; i < hex.length; i += 2) {\n            asciiString += String.fromCharCode(parseInt(hex.substr(i, 2), 16))\n        }\n        return asciiString\n    })\n}\n\n// mengeluarkan dari array\nfunction combineAsciiStrings(asciiArray) {\n    return asciiArray.join('')\n}\n\n// Konversi ke heksadesimal\nlet hexNumber = decimalArrayToHexArray(msg.payload)\n\n// Konversi ke ascii\nlet asciiChar=hexToAscii(hexNumber)\n\n// Set hasil ke msg.payload\nlet txt = combineAsciiStrings(asciiChar)\nmsg.payload = txt.substr(0, 15)\nreturn msg",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 570,
+        "y": 180,
+        "wires": [
+            [
+                "9a4d3ccd67cf724e"
+            ]
+        ]
+    },
+    {
+        "id": "84d30edc4e901d5d",
+        "type": "modbus-getter",
+        "z": "f7b69ad05fbc9239",
+        "name": "cy01.2_maintenanceHour",
+        "showStatusActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "logIOActivities": false,
+        "unitid": "29",
+        "dataType": "HoldingRegister",
+        "adr": "3003",
+        "quantity": "1",
+        "server": "8a654628f11de8d7",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "keepMsgProperties": false,
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "x": 370,
+        "y": 980,
+        "wires": [
+            [
+                "eb23f8781f7d3fe3"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "41a5f4324c3e1c1c",
+        "type": "modbus-getter",
+        "z": "f7b69ad05fbc9239",
+        "name": "cy01.2_RunHourM1",
+        "showStatusActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "logIOActivities": false,
+        "unitid": "29",
+        "dataType": "HoldingRegister",
+        "adr": "3000",
+        "quantity": "2",
+        "server": "8a654628f11de8d7",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "keepMsgProperties": false,
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "x": 360,
+        "y": 460,
+        "wires": [
+            [
+                "48153e67584bdd64"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "cf41f437c98122c3",
+        "type": "modbus-getter",
+        "z": "f7b69ad05fbc9239",
+        "name": "cy01.2_RunHourM2",
+        "showStatusActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "logIOActivities": false,
+        "unitid": "29",
+        "dataType": "HoldingRegister",
+        "adr": "3233",
+        "quantity": "2",
+        "server": "8a654628f11de8d7",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "keepMsgProperties": false,
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "x": 360,
+        "y": 500,
+        "wires": [
+            [
+                "563606099eeea693"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "266d711fddbab6c3",
+        "type": "modbus-getter",
+        "z": "f7b69ad05fbc9239",
+        "name": "cy01.2_RunHourM3",
+        "showStatusActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "logIOActivities": false,
+        "unitid": "29",
+        "dataType": "HoldingRegister",
+        "adr": "3235",
+        "quantity": "2",
+        "server": "8a654628f11de8d7",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "keepMsgProperties": false,
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "x": 360,
+        "y": 540,
+        "wires": [
+            [
+                "560b28de25b20d0b"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "92a75716921ea047",
+        "type": "modbus-getter",
+        "z": "f7b69ad05fbc9239",
+        "d": true,
+        "name": "cy01.2_RunHourM4",
+        "showStatusActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "logIOActivities": false,
+        "unitid": "29",
+        "dataType": "HoldingRegister",
+        "adr": "3237",
+        "quantity": "2",
+        "server": "8a654628f11de8d7",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "keepMsgProperties": false,
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "x": 360,
+        "y": 580,
+        "wires": [
+            [
+                "ff45e96ea2078b62"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "bb2d470312c0e0ea",
+        "type": "modbus-getter",
+        "z": "f7b69ad05fbc9239",
+        "name": "cy01.2_setMaintenAge",
+        "showStatusActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "logIOActivities": false,
+        "unitid": "29",
+        "dataType": "HoldingRegister",
+        "adr": "3199",
+        "quantity": "2",
+        "server": "8a654628f11de8d7",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "keepMsgProperties": false,
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "x": 360,
+        "y": 1060,
+        "wires": [
+            [
+                "1d017c427445f3be"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "1d017c427445f3be",
+        "type": "function",
+        "z": "f7b69ad05fbc9239",
+        "name": "dec to hex date",
+        "func": "// fungsi desimal ke heksadesimal\nfunction decimalArrayToHexArray(decimalArray) {\n    return decimalArray.map(decimal => decimal.toString(16))\n}\n\n// fungsi heksadesimal ke tanggal\nfunction hex2Date(str) {\n   let tx=str.join('');\n   let tx1=tx.substr(0,2)\n   let tx2=tx.substr(2,2)\n   let tx3=tx.substr(4,2)\n   return tx=\"20\"+tx3+\"-\"+tx2+\"-\"+tx1\n}\n\n// Ambil nilai awal dari msg.payload\nlet decimalNumber = msg.payload;\n\n// Konversi ke heksadesimal\nlet hexNumber = decimalArrayToHexArray(decimalNumber)\n\n// Set hasil ke msg.payload\nmsg.payload = hex2Date(hexNumber)\n\nreturn msg",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 600,
+        "y": 1060,
+        "wires": [
+            [
+                "03c866207df2215f",
+                "b8de36ce0ba6b4fc"
+            ]
+        ]
+    },
+    {
+        "id": "98b5d94243f48969",
+        "type": "modbus-getter",
+        "z": "f7b69ad05fbc9239",
+        "name": "cy01.2_setNomPwr",
+        "showStatusActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "logIOActivities": false,
+        "unitid": "29",
+        "dataType": "HoldingRegister",
+        "adr": "3027",
+        "quantity": "1",
+        "server": "8a654628f11de8d7",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "keepMsgProperties": false,
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "x": 350,
+        "y": 1120,
+        "wires": [
+            [
+                "4659d044e05259b0"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "4659d044e05259b0",
+        "type": "function",
+        "z": "f7b69ad05fbc9239",
+        "name": "nominalPower",
+        "func": "msg.payload=msg.payload[0]/10;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "5",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 580,
+        "y": 1120,
+        "wires": [
+            [
+                "2447745fb9313fee"
+            ]
+        ]
+    },
+    {
+        "id": "abe0de3be9221a17",
+        "type": "modbus-getter",
+        "z": "f7b69ad05fbc9239",
+        "name": "cy01.2_setNomCur",
+        "showStatusActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "logIOActivities": false,
+        "unitid": "29",
+        "dataType": "HoldingRegister",
+        "adr": "3028",
+        "quantity": "1",
+        "server": "8a654628f11de8d7",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "keepMsgProperties": false,
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "x": 350,
+        "y": 1180,
+        "wires": [
+            [
+                "9e2a27aab51d2c96"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "9e2a27aab51d2c96",
+        "type": "function",
+        "z": "f7b69ad05fbc9239",
+        "name": "nominalCurrent",
+        "func": "msg.payload=msg.payload/10;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "5",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 580,
+        "y": 1180,
+        "wires": [
+            [
+                "2a1e367f5c180f34"
+            ]
+        ]
+    },
+    {
+        "id": "d6b06aa96b2ff28b",
+        "type": "modbus-getter",
+        "z": "f7b69ad05fbc9239",
+        "name": "cy01.2_pasDcode",
+        "showStatusActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "logIOActivities": false,
+        "unitid": "29",
+        "dataType": "HoldingRegister",
+        "adr": "113",
+        "quantity": "2",
+        "server": "8a654628f11de8d7",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "keepMsgProperties": false,
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "x": 350,
+        "y": 220,
+        "wires": [
+            [
+                "736a5844bb62df9f"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "736a5844bb62df9f",
+        "type": "function",
+        "z": "f7b69ad05fbc9239",
+        "name": "dec to hex 32bit dec",
+        "func": "// fungsi dec to Hex\nfunction decimalArrayToHex(decimalArray){\n    let hex= decimalArray.map(decimal => decimal.toString(16))\n    return hex.join('')\n}\n\n//Konversi dec ke Hex\nlet hexa=decimalArrayToHex(msg.payload)\n\n//Konversi Hex ke 32bit dec\nmsg.payload = Number.parseInt(hexa,16)\n\nreturn msg",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 580,
+        "y": 220,
+        "wires": [
+            [
+                "69cfc21cee16b863"
+            ]
+        ]
+    },
+    {
+        "id": "452d92cc54813122",
+        "type": "modbus-getter",
+        "z": "f7b69ad05fbc9239",
+        "name": "cy01.2_ctrlMode",
+        "showStatusActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "logIOActivities": false,
+        "unitid": "29",
+        "dataType": "HoldingRegister",
+        "adr": "3136",
+        "quantity": "1",
+        "server": "8a654628f11de8d7",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "keepMsgProperties": false,
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "x": 340,
+        "y": 260,
+        "wires": [
+            [
+                "96bb7b6b0a243674"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "96bb7b6b0a243674",
+        "type": "function",
+        "z": "f7b69ad05fbc9239",
+        "name": "controllerMode",
+        "func": "let mode=msg.payload[0]\n\n//status mode 0->off , 1->manual , 2->auto\nif(mode==2){\n    msg.payload=\"AUTO\"\n}\nelse if(mode==1){\n    msg.payload=\"MANUAL\"\n}\nelse if(mode==0){\n    msg.payload=\"OFF\"\n}\nreturn msg;",
+        "outputs": 1,
+        "timeout": "5",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 560,
+        "y": 260,
+        "wires": [
+            [
+                "7b7bb667bc36a9a2"
+            ]
+        ]
+    },
+    {
+        "id": "09a42ed8fa3c5524",
+        "type": "modbus-getter",
+        "z": "f7b69ad05fbc9239",
+        "name": "cy01.2_energyKVArh",
+        "showStatusActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "logIOActivities": false,
+        "unitid": "29",
+        "dataType": "HoldingRegister",
+        "adr": "3007",
+        "quantity": "2",
+        "server": "8a654628f11de8d7",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "keepMsgProperties": false,
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "x": 360,
+        "y": 660,
+        "wires": [
+            [
+                "acae8317305c6670"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "50b503e819ee3fb8",
+        "type": "modbus-getter",
+        "z": "f7b69ad05fbc9239",
+        "name": "cy01.2_energyKWh",
+        "showStatusActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "logIOActivities": false,
+        "unitid": "29",
+        "dataType": "HoldingRegister",
+        "adr": "3005",
+        "quantity": "2",
+        "server": "8a654628f11de8d7",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "keepMsgProperties": false,
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "x": 350,
+        "y": 620,
+        "wires": [
+            [
+                "44debd2b0d732f3b"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "44debd2b0d732f3b",
+        "type": "function",
+        "z": "f7b69ad05fbc9239",
+        "name": "dec to hex 32bit dec_float",
+        "func": "// fungsi dec to Hex\nfunction decimalArrayToHex(decimalArray){\n    let hex= decimalArray.map(decimal => decimal.toString(16))\n    return hex.join('')\n}\n\n//Konversi dec ke Hex\nlet hexa=decimalArrayToHex(msg.payload)\n\n//Konversi Hex ke 32bit dec float\nmsg.payload = Number.parseInt(hexa,16)/10\n\nreturn msg",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 610,
+        "y": 620,
+        "wires": [
+            [
+                "f59ec40914d3f9d3"
+            ]
+        ]
+    },
+    {
+        "id": "acae8317305c6670",
+        "type": "function",
+        "z": "f7b69ad05fbc9239",
+        "name": "dec to hex 32bit dec_float",
+        "func": "// fungsi dec to Hex\nfunction decimalArrayToHex(decimalArray){\n    let hex= decimalArray.map(decimal => decimal.toString(16))\n    return hex.join('')\n}\n\n//Konversi dec ke Hex\nlet hexa=decimalArrayToHex(msg.payload)\n\n//Konversi Hex ke 32bit dec float\nmsg.payload = Number.parseInt(hexa,16)/10\n\nreturn msg",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 610,
+        "y": 660,
+        "wires": [
+            [
+                "bc2c6d9902fe50d3"
+            ]
+        ]
+    },
+    {
+        "id": "48153e67584bdd64",
+        "type": "function",
+        "z": "f7b69ad05fbc9239",
+        "name": "dec to hex 32bit dec_float",
+        "func": "// fungsi dec to Hex\nfunction decimalArrayToHex(decimalArray){\n    let hex= decimalArray.map(decimal => decimal.toString(16))\n    return hex.join('')\n}\n\n//Konversi dec ke Hex\nlet hexa=decimalArrayToHex(msg.payload)\n\n//Konversi Hex ke 32bit dec float\nmsg.payload = Number.parseInt(hexa,16)/10\n\nreturn msg",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 610,
+        "y": 460,
+        "wires": [
+            [
+                "a7274f4533cb5862"
+            ]
+        ]
+    },
+    {
+        "id": "563606099eeea693",
+        "type": "function",
+        "z": "f7b69ad05fbc9239",
+        "name": "dec to hex 32bit dec_float",
+        "func": "// fungsi dec to Hex\nfunction decimalArrayToHex(decimalArray){\n    let hex= decimalArray.map(decimal => decimal.toString(16))\n    return hex.join('')\n}\n\n//Konversi dec ke Hex\nlet hexa=decimalArrayToHex(msg.payload)\n\n//Konversi Hex ke 32bit dec float\nmsg.payload = Number.parseInt(hexa,16)/10\n\nreturn msg",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 610,
+        "y": 500,
+        "wires": [
+            [
+                "09c34629378fb963"
+            ]
+        ]
+    },
+    {
+        "id": "560b28de25b20d0b",
+        "type": "function",
+        "z": "f7b69ad05fbc9239",
+        "name": "dec to hex 32bit dec_float",
+        "func": "// fungsi dec to Hex\nfunction decimalArrayToHex(decimalArray){\n    let hex= decimalArray.map(decimal => decimal.toString(16))\n    return hex.join('')\n}\n\n//Konversi dec ke Hex\nlet hexa=decimalArrayToHex(msg.payload)\n\n//Konversi Hex ke 32bit dec float\nmsg.payload = Number.parseInt(hexa,16)/10\n\nreturn msg",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 610,
+        "y": 540,
+        "wires": [
+            [
+                "4af35174f3357ef3"
+            ]
+        ]
+    },
+    {
+        "id": "ff45e96ea2078b62",
+        "type": "function",
+        "z": "f7b69ad05fbc9239",
+        "d": true,
+        "name": "dec to hex 32bit dec_float",
+        "func": "// fungsi dec to Hex\nfunction decimalArrayToHex(decimalArray){\n    let hex= decimalArray.map(decimal => decimal.toString(16))\n    return hex.join('')\n}\n\n//Konversi dec ke Hex\nlet hexa=decimalArrayToHex(msg.payload)\n\n//Konversi Hex ke 32bit dec float\nmsg.payload = Number.parseInt(hexa,16)/10\n\nreturn msg",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 610,
+        "y": 580,
+        "wires": [
+            [
+                "0d0c9d1237643274"
+            ]
+        ]
+    },
+    {
+        "id": "a3d6985b5ec8794b",
+        "type": "modbus-getter",
+        "z": "f7b69ad05fbc9239",
+        "name": "cy01.2_setOverCurrent%",
+        "showStatusActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "logIOActivities": false,
+        "unitid": "29",
+        "dataType": "HoldingRegister",
+        "adr": "3091",
+        "quantity": "1",
+        "server": "8a654628f11de8d7",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "keepMsgProperties": false,
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "x": 370,
+        "y": 1340,
+        "wires": [
+            [
+                "c53afbb8c5af0827"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "c6a2aa28701320d3",
+        "type": "modbus-getter",
+        "z": "f7b69ad05fbc9239",
+        "name": "cy01.2_setOverVoltage%",
+        "showStatusActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "logIOActivities": false,
+        "unitid": "29",
+        "dataType": "HoldingRegister",
+        "adr": "3098",
+        "quantity": "1",
+        "server": "8a654628f11de8d7",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "keepMsgProperties": false,
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "x": 370,
+        "y": 1400,
+        "wires": [
+            [
+                "27114877529e4616"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "5d1ef768ef4496dd",
+        "type": "modbus-getter",
+        "z": "f7b69ad05fbc9239",
+        "name": "cy01.2_setUnderVoltage%",
+        "showStatusActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "logIOActivities": false,
+        "unitid": "29",
+        "dataType": "HoldingRegister",
+        "adr": "3099",
+        "quantity": "1",
+        "server": "8a654628f11de8d7",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "keepMsgProperties": false,
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "x": 380,
+        "y": 1460,
+        "wires": [
+            [
+                "1d752697a9176492"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "0538f66b655db810",
+        "type": "change",
+        "z": "f7b69ad05fbc9239",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "pump1",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 920,
+        "y": 340,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "109baef505d5645b",
+        "type": "change",
+        "z": "f7b69ad05fbc9239",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "limitUnderVolt",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 820,
+        "y": 1460,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "20dd7dd80809581b",
+        "type": "change",
+        "z": "f7b69ad05fbc9239",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "pump2",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 920,
+        "y": 380,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "4bfd30c9a9a3aaa1",
+        "type": "change",
+        "z": "f7b69ad05fbc9239",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "pump3",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 920,
+        "y": 420,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "9a4d3ccd67cf724e",
+        "type": "change",
+        "z": "f7b69ad05fbc9239",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "motorName",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 760,
+        "y": 180,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "2447745fb9313fee",
+        "type": "change",
+        "z": "f7b69ad05fbc9239",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "nominalPower",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 780,
+        "y": 1120,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "a4a6c09204e5af4e",
+        "type": "http response",
+        "z": "f7b69ad05fbc9239",
+        "name": "",
+        "statusCode": "200",
+        "headers": {},
+        "x": 660,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "6110614d397586be",
+        "type": "http in",
+        "z": "f7b69ad05fbc9239",
+        "name": "",
+        "url": "/api/cy1_2",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 340,
+        "y": 40,
+        "wires": [
+            [
+                "df9adddfe1c345b9"
+            ]
+        ]
+    },
+    {
+        "id": "2a1e367f5c180f34",
+        "type": "change",
+        "z": "f7b69ad05fbc9239",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "nominalCurrent",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 790,
+        "y": 1180,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f809fd11688478cf",
+        "type": "change",
+        "z": "f7b69ad05fbc9239",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "limitOverCurrent",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 830,
+        "y": 1340,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e69a62861233e7dc",
+        "type": "change",
+        "z": "f7b69ad05fbc9239",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "limitOverVolt",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 820,
+        "y": 1400,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "eb23f8781f7d3fe3",
+        "type": "function",
+        "z": "f7b69ad05fbc9239",
+        "name": "valueNonArray",
+        "func": "msg.payload=msg.payload[0]\nreturn msg;",
+        "outputs": 1,
+        "timeout": "5",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 620,
+        "y": 980,
+        "wires": [
+            [
+                "a980c5ed6d3806c2"
+            ]
+        ]
+    },
+    {
+        "id": "c53afbb8c5af0827",
+        "type": "function",
+        "z": "f7b69ad05fbc9239",
+        "name": "valueNonArray",
+        "func": "msg.payload=msg.payload[0]\nreturn msg;",
+        "outputs": 1,
+        "timeout": "5",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 620,
+        "y": 1340,
+        "wires": [
+            [
+                "f809fd11688478cf"
+            ]
+        ]
+    },
+    {
+        "id": "27114877529e4616",
+        "type": "function",
+        "z": "f7b69ad05fbc9239",
+        "name": "valueNonArray",
+        "func": "msg.payload=msg.payload[0]\nreturn msg;",
+        "outputs": 1,
+        "timeout": "5",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 620,
+        "y": 1400,
+        "wires": [
+            [
+                "e69a62861233e7dc"
+            ]
+        ]
+    },
+    {
+        "id": "1d752697a9176492",
+        "type": "function",
+        "z": "f7b69ad05fbc9239",
+        "name": "valueNonArray",
+        "func": "msg.payload=msg.payload[0]\nreturn msg;",
+        "outputs": 1,
+        "timeout": "5",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 620,
+        "y": 1460,
+        "wires": [
+            [
+                "109baef505d5645b"
+            ]
+        ]
+    },
+    {
+        "id": "7b7bb667bc36a9a2",
+        "type": "change",
+        "z": "f7b69ad05fbc9239",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "controllerMode",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 760,
+        "y": 260,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "03c866207df2215f",
+        "type": "change",
+        "z": "f7b69ad05fbc9239",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "maintainAge",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 800,
+        "y": 1060,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "a980c5ed6d3806c2",
+        "type": "change",
+        "z": "f7b69ad05fbc9239",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "maintenanceHour",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 830,
+        "y": 980,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f59ec40914d3f9d3",
+        "type": "change",
+        "z": "f7b69ad05fbc9239",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "energyKW",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 830,
+        "y": 620,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "bc2c6d9902fe50d3",
+        "type": "change",
+        "z": "f7b69ad05fbc9239",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "energyKVA",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 830,
+        "y": 660,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "a7274f4533cb5862",
+        "type": "change",
+        "z": "f7b69ad05fbc9239",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "runM1",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 820,
+        "y": 460,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "09c34629378fb963",
+        "type": "change",
+        "z": "f7b69ad05fbc9239",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "runM2",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 820,
+        "y": 500,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "4af35174f3357ef3",
+        "type": "change",
+        "z": "f7b69ad05fbc9239",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "runM3",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 820,
+        "y": 540,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "0d0c9d1237643274",
+        "type": "change",
+        "z": "f7b69ad05fbc9239",
+        "d": true,
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "runM4",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 820,
+        "y": 580,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "69cfc21cee16b863",
+        "type": "change",
+        "z": "f7b69ad05fbc9239",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "decode",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 780,
+        "y": 220,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "3cdac0c36fbfd4ca",
+        "type": "change",
+        "z": "f7b69ad05fbc9239",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "atRequest",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 750,
+        "y": 140,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "29d8b648285365e5",
+        "type": "change",
+        "z": "f7b69ad05fbc9239",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "waterLevel",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 730,
+        "y": 300,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "2c5c562b9e981007",
+        "type": "inject",
+        "z": "f7b69ad05fbc9239",
+        "name": "interval saving 1minutes",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "60",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 150,
+        "y": 80,
+        "wires": [
+            [
+                "f39a923c27e4f584"
+            ]
+        ]
+    },
+    {
+        "id": "356113f8332a7857",
+        "type": "modbus-getter",
+        "z": "f7b69ad05fbc9239",
+        "name": "cy01.2_apparentPower",
+        "showStatusActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "logIOActivities": false,
+        "unitid": "29",
+        "dataType": "HoldingRegister",
+        "adr": "31",
+        "quantity": "1",
+        "server": "8a654628f11de8d7",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "keepMsgProperties": false,
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "x": 370,
+        "y": 700,
+        "wires": [
+            [
+                "10ad4ba5955246d2"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "a21a1f7289f9dcb5",
+        "type": "modbus-getter",
+        "z": "f7b69ad05fbc9239",
+        "name": "cy01.2_voltageL1N",
+        "showStatusActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "logIOActivities": false,
+        "unitid": "29",
+        "dataType": "HoldingRegister",
+        "adr": "0",
+        "quantity": "1",
+        "server": "8a654628f11de8d7",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "keepMsgProperties": false,
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "x": 350,
+        "y": 740,
+        "wires": [
+            [
+                "13dc61ce0282ada6"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "a9bd46463f5c2d4d",
+        "type": "modbus-getter",
+        "z": "f7b69ad05fbc9239",
+        "name": "cy01.2_voltageL2N",
+        "showStatusActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "logIOActivities": false,
+        "unitid": "29",
+        "dataType": "HoldingRegister",
+        "adr": "1",
+        "quantity": "1",
+        "server": "8a654628f11de8d7",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "keepMsgProperties": false,
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "x": 350,
+        "y": 780,
+        "wires": [
+            [
+                "6029dcc9c391a8b8"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "93326a75b7e79994",
+        "type": "modbus-getter",
+        "z": "f7b69ad05fbc9239",
+        "name": "cy01.2_voltageL3N",
+        "showStatusActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "logIOActivities": false,
+        "unitid": "29",
+        "dataType": "HoldingRegister",
+        "adr": "2",
+        "quantity": "1",
+        "server": "8a654628f11de8d7",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "keepMsgProperties": false,
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "x": 350,
+        "y": 820,
+        "wires": [
+            [
+                "60e374c5ab466cd3"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "d5aba93f9dd0f889",
+        "type": "change",
+        "z": "f7b69ad05fbc9239",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "voltageL1N",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 830,
+        "y": 740,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "08be7213960f64c6",
+        "type": "change",
+        "z": "f7b69ad05fbc9239",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "voltageL2N",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 830,
+        "y": 780,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "64c25083f3319efc",
+        "type": "change",
+        "z": "f7b69ad05fbc9239",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "voltageL3N",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 830,
+        "y": 820,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "10ad4ba5955246d2",
+        "type": "function",
+        "z": "f7b69ad05fbc9239",
+        "name": "Apparent_Power",
+        "func": "msg.payload=msg.payload[0]/10\nreturn msg",
+        "outputs": 1,
+        "timeout": "5",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 610,
+        "y": 700,
+        "wires": [
+            [
+                "f5da6f94fc764525"
+            ]
+        ]
+    },
+    {
+        "id": "fe785feb23b851da",
+        "type": "modbus-getter",
+        "z": "f7b69ad05fbc9239",
+        "name": "cy01.2_currentL1",
+        "showStatusActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "logIOActivities": false,
+        "unitid": "29",
+        "dataType": "HoldingRegister",
+        "adr": "7",
+        "quantity": "1",
+        "server": "8a654628f11de8d7",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "keepMsgProperties": false,
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "x": 350,
+        "y": 860,
+        "wires": [
+            [
+                "a4cc7a5c7fb67990"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "8138aa01d72bab79",
+        "type": "modbus-getter",
+        "z": "f7b69ad05fbc9239",
+        "name": "cy01.2_currentL2",
+        "showStatusActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "logIOActivities": false,
+        "unitid": "29",
+        "dataType": "HoldingRegister",
+        "adr": "8",
+        "quantity": "1",
+        "server": "8a654628f11de8d7",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "keepMsgProperties": false,
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "x": 350,
+        "y": 900,
+        "wires": [
+            [
+                "f3fb96c9d53ed085"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "ad6451f4f7193bfa",
+        "type": "modbus-getter",
+        "z": "f7b69ad05fbc9239",
+        "name": "cy01.2_currentL3",
+        "showStatusActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "logIOActivities": false,
+        "unitid": "29",
+        "dataType": "HoldingRegister",
+        "adr": "9",
+        "quantity": "1",
+        "server": "8a654628f11de8d7",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "keepMsgProperties": false,
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "x": 350,
+        "y": 940,
+        "wires": [
+            [
+                "33e5e044acb74888"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "a4cc7a5c7fb67990",
+        "type": "function",
+        "z": "f7b69ad05fbc9239",
+        "name": "current L1 L2 L3",
+        "func": "msg.payload=msg.payload[0]/10\nreturn msg",
+        "outputs": 1,
+        "timeout": "5",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 580,
+        "y": 860,
+        "wires": [
+            [
+                "60c2818df1ce105f"
+            ]
+        ]
+    },
+    {
+        "id": "f3fb96c9d53ed085",
+        "type": "function",
+        "z": "f7b69ad05fbc9239",
+        "name": "current L1 L2 L3",
+        "func": "msg.payload=msg.payload[0]/10\nreturn msg",
+        "outputs": 1,
+        "timeout": "5",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 580,
+        "y": 900,
+        "wires": [
+            [
+                "9449a9fbd1cc7569"
+            ]
+        ]
+    },
+    {
+        "id": "33e5e044acb74888",
+        "type": "function",
+        "z": "f7b69ad05fbc9239",
+        "name": "current L1 L2 L3",
+        "func": "msg.payload=msg.payload[0]/10\nreturn msg",
+        "outputs": 1,
+        "timeout": "5",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 580,
+        "y": 940,
+        "wires": [
+            [
+                "d57f8416d8358ec2"
+            ]
+        ]
+    },
+    {
+        "id": "b8de36ce0ba6b4fc",
+        "type": "function",
+        "z": "f7b69ad05fbc9239",
+        "name": "selisih hari maintain run",
+        "func": "let maintenAge=msg.payload\nlet curdate=new Date().getTime()\nlet date=new Date(curdate)\n\nlet year=date.getFullYear()\nlet month=String(date.getMonth() + 1).padStart(2, '0')\nlet day=String(date.getDate()).padStart(2, '0')\nlet nowdate=`${year}-${month}-${day}`\n\nlet start=new Date(maintenAge)\nlet end=new Date(nowdate)\nconst differenceInTime = end.getTime() - start.getTime()\nconst differenceInDays = differenceInTime / (1000 * 3600 * 24)\n\nmsg.payload = differenceInDays\nreturn msg",
+        "outputs": 1,
+        "timeout": "5",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 610,
+        "y": 1020,
+        "wires": [
+            [
+                "76c385c8a4de3d08"
+            ]
+        ]
+    },
+    {
+        "id": "f5da6f94fc764525",
+        "type": "change",
+        "z": "f7b69ad05fbc9239",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "apparPower",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 840,
+        "y": 700,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "9449a9fbd1cc7569",
+        "type": "change",
+        "z": "f7b69ad05fbc9239",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "currentL2",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 810,
+        "y": 900,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "d57f8416d8358ec2",
+        "type": "change",
+        "z": "f7b69ad05fbc9239",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "currentL3",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 810,
+        "y": 940,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "60c2818df1ce105f",
+        "type": "change",
+        "z": "f7b69ad05fbc9239",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "currentL1",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 810,
+        "y": 860,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "76c385c8a4de3d08",
+        "type": "change",
+        "z": "f7b69ad05fbc9239",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "maintainRunDay",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 850,
+        "y": 1020,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "13dc61ce0282ada6",
+        "type": "function",
+        "z": "f7b69ad05fbc9239",
+        "name": "valueNonArray",
+        "func": "msg.payload=msg.payload[0]\nreturn msg;",
+        "outputs": 1,
+        "timeout": "5",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 600,
+        "y": 740,
+        "wires": [
+            [
+                "d5aba93f9dd0f889"
+            ]
+        ]
+    },
+    {
+        "id": "6029dcc9c391a8b8",
+        "type": "function",
+        "z": "f7b69ad05fbc9239",
+        "name": "valueNonArray",
+        "func": "msg.payload=msg.payload[0]\nreturn msg;",
+        "outputs": 1,
+        "timeout": "5",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 600,
+        "y": 780,
+        "wires": [
+            [
+                "08be7213960f64c6"
+            ]
+        ]
+    },
+    {
+        "id": "60e374c5ab466cd3",
+        "type": "function",
+        "z": "f7b69ad05fbc9239",
+        "name": "valueNonArray",
+        "func": "msg.payload=msg.payload[0]\nreturn msg;",
+        "outputs": 1,
+        "timeout": "5",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 600,
+        "y": 820,
+        "wires": [
+            [
+                "64c25083f3319efc"
+            ]
+        ]
+    },
+    {
+        "id": "f39a923c27e4f584",
+        "type": "function",
+        "z": "f7b69ad05fbc9239",
+        "name": "insertDB_SQL",
+        "func": "let atRequest = flow.get('atRequest')\nlet motorName = flow.get('motorName')\nlet decode = flow.get('decode')\nlet controllerMode = flow.get('controllerMode')\nlet waterLevel = flow.get('waterLevel')\nlet pump1 = flow.get('pump1')\nlet pump2 = flow.get('pump2')\nlet pump3 = flow.get('pump3')\nlet runM1 = flow.get('runM1')\nlet runM2 = flow.get('runM2')\nlet runM3 = flow.get('runM3')\nlet maintenHour = flow.get('maintenanceHour')\nlet energyKW = flow.get('energyKW')\nlet energyKVA = flow.get('energyKVA')\nlet apparPower = flow.get('apparPower')\nlet voltageL1N = flow.get('voltageL1N')\nlet voltageL2N = flow.get('voltageL2N')\nlet voltageL3N = flow.get('voltageL3N')\nlet currentL1 = flow.get('currentL1')\nlet currentL2 = flow.get('currentL2')\nlet currentL3 = flow.get('currentL3')\nlet maintainRun = flow.get('maintainRunDay')\nlet maintainAge = flow.get('maintainAge')\nlet nomPower = flow.get('nominalPower')\nlet nomCurrent = flow.get('nominalCurrent')\n\nlet overCurrent = flow.get('limitOverCurrent')\nlet overVolt = flow.get('limitOverVolt')\nlet underVolt = flow.get('limitUnderVolt')\n\nmsg.topic = {\n    \"motorName\": motorName,\n    \"decode\": decode,\n    \"controllerMode\": controllerMode,\n    \"waterLevel\": waterLevel,\n    \"pump1\": pump1,\n    \"pump2\": pump2,\n    \"pump3\": pump3,\n    \"runM1\": runM1,\n    \"runM2\": runM2,\n    \"runM3\": runM3,\n    \"maintenHour\": maintenHour,\n    \"energyKW\": energyKW,\n    \"energyKVA\": energyKVA,\n    \"apparPower\": apparPower,\n    \"voltageL1N\": voltageL1N,\n    \"voltageL2N\": voltageL2N,\n    \"voltageL3N\": voltageL3N,\n    \"currentL1\": currentL1,\n    \"currentL2\": currentL2,\n    \"currentL3\": currentL3,\n    \"maintainRun\": maintainRun,\n    \"maintainAge\": maintainAge,\n    \"nomPower\": nomPower,\n    \"nomCurrent\": nomCurrent\n}\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 520,
+        "y": 80,
+        "wires": [
+            [
+                "e7f57476bddb4440"
+            ]
+        ]
+    },
+    {
+        "id": "04b6e3f3132b6596",
+        "type": "ping-many",
+        "z": "f7b69ad05fbc9239",
+        "name": "",
+        "host": "10.5.6.49",
+        "x": 320,
+        "y": 140,
+        "wires": [
+            [
+                "b6def7a5b4ac78bc"
+            ]
+        ]
+    },
+    {
+        "id": "b6def7a5b4ac78bc",
+        "type": "function",
+        "z": "f7b69ad05fbc9239",
+        "name": "Ping & Request Time",
+        "func": "let atReqTime=msg._payload\n\nif(msg.payload==1){\n    msg.payload = Math.floor(atReqTime/1000).toString()\n}\nelse{\n    msg.payload=0\n}\nreturn msg",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 540,
+        "y": 140,
+        "wires": [
+            [
+                "3cdac0c36fbfd4ca"
+            ]
+        ]
+    },
+    {
+        "id": "e7f57476bddb4440",
+        "type": "oracle-exec",
+        "z": "f7b69ad05fbc9239",
+        "name": "POMPA_CY1_2",
+        "usequery": true,
+        "prepare": false,
+        "error": "error",
+        "remove": true,
+        "query": [
+            {
+                "sql": "INSERT INTO POMPA_CY1_2 (MOTORNAME,PASSDECODE,CONTROLLER_MODE,WATERLEVEL,PUMP1_STATUS,PUMP2_STATUS,PUMP3_STATUS,RUNHOURM1,RUNHOURM2,RUNHOURM3,MAINTENANCE_HOUR,ENERGYKW,ENERGYKVA,APPARENT_POWER,VOLTAGEL1N,VOLTAGEL2N,VOLTAGEL3N,CURRENTL1,CURRENTL2,CURRENTL3,SET_MAINTAINRUN,SET_MAINTAINAGE,SET_NOMINAL_POWER,SET_NOMINAL_CURRENT,DATETIME) VALUES (:motorName, :decode, :controllerMode, :waterLevel, :pump1, :pump2, :pump3, :runM1, :runM2, :runM3, :maintenHour, :energyKW, :energyKVA, :apparPower, :voltageL1N, :voltageL2N, :voltageL3N, :currentL1, :currentL2, :currentL3, :maintainRun, :maintainAge, :nomPower, :nomCurrent, SYSTIMESTAMP)",
+                "name": "payload",
+                "param": {
+                    "type": "msg",
+                    "value": "topic"
+                }
+            }
+        ],
+        "server": "ec68b70a38aefb78",
+        "resultaction": "single",
+        "x": 760,
+        "y": 80,
+        "wires": [
+            [],
+            []
+        ]
+    },
+    {
+        "id": "b1ba7e1f0f2f8748",
+        "type": "modbus-getter",
+        "z": "f7b69ad05fbc9239",
+        "name": "realPower",
+        "showStatusActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "logIOActivities": false,
+        "unitid": "1",
+        "dataType": "HoldingRegister",
+        "adr": "13",
+        "quantity": "1",
+        "server": "8a654628f11de8d7",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "keepMsgProperties": false,
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "x": 320,
+        "y": 1240,
+        "wires": [
+            [
+                "0ebc8215bbf9291a"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "0ebc8215bbf9291a",
+        "type": "function",
+        "z": "f7b69ad05fbc9239",
+        "name": "Real_Power",
+        "func": "msg.payload=msg.payload[0]/10\nreturn msg",
+        "outputs": 1,
+        "timeout": "5",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 550,
+        "y": 1240,
+        "wires": [
+            [
+                "46cd544320e74806"
+            ]
+        ]
+    },
+    {
+        "id": "46cd544320e74806",
+        "type": "change",
+        "z": "f7b69ad05fbc9239",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "realPower",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 790,
+        "y": 1240,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "8a654628f11de8d7",
+        "type": "modbus-client",
+        "name": "cy01.2_pump_10.5.6.49",
+        "clienttype": "tcp",
+        "bufferCommands": true,
+        "stateLogEnabled": false,
+        "queueLogEnabled": false,
+        "failureLogEnabled": true,
+        "tcpHost": "10.5.6.49",
+        "tcpPort": "502",
+        "tcpType": "DEFAULT",
+        "serialPort": "/dev/ttyUSB",
+        "serialType": "RTU-BUFFERD",
+        "serialBaudrate": "9600",
+        "serialDatabits": "8",
+        "serialStopbits": "1",
+        "serialParity": "none",
+        "serialConnectionDelay": "100",
+        "serialAsciiResponseStartDelimiter": "0x3A",
+        "unit_id": "29",
+        "commandDelay": "1",
+        "clientTimeout": "5000",
+        "reconnectOnTimeout": true,
+        "reconnectTimeout": "5000",
+        "parallelUnitIdsAllowed": true,
+        "showErrors": false,
+        "showWarnings": true,
+        "showLogs": true
+    },
+    {
+        "id": "ec68b70a38aefb78",
+        "type": "oracle-server",
+        "connectionname": "intranetdev",
+        "tnsname": "",
+        "connectiontype": "Classic",
+        "instantclientpath": "",
+        "host": "dbdev.pelindo.id",
+        "port": "1628",
+        "reconnect": false,
+        "reconnecttimeout": "10000",
+        "db": "intranetdev"
+    }
+]

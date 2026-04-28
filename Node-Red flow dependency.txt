@@ -1,0 +1,7 @@
+##### node-red flow dependency #####
+#### install this following pallete flow ####
+
+UI dashboard flow	==>	npm install node-red-dashboard
+Modbus flow		==>	npm install node-red-contrib-modbus
+Ping connection flow	==>	npm install node-red-contrib-advanced-ping-multiple
+Oracle DB flow		==>	npm install @nitisakc/node-red-oracledb
